@@ -1,11 +1,13 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Button, Form, Segment } from "semantic-ui-react";
+import { v4 as uuid } from "uuid";
 import { useStore } from "../../../app/stores/store";
-import { useParams } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import LoadingComponent from "../../../app/layout/LoadingComponents";
 
 export default observer(function ActivityForm() {
+  const history = useHistory();
   const { activityStore } = useStore();
   const {
     createActivity,
@@ -31,7 +33,19 @@ export default observer(function ActivityForm() {
   }, [id, loadActivity]);
 
   function handleSubmit() {
-    activity.id ? updateActivity(activity) : createActivity(activity);
+    if (activity.id.length === 0) {
+      let newActivity = {
+        ...activity,
+        id: uuid(),
+      };
+      createActivity(newActivity).then(() =>
+        history.push(`/activities/${newActivity.id}`)
+      );
+    } else {
+      updateActivity(activity).then(() =>
+        history.push(`/activities/${activity.id}`)
+      );
+    }
   }
 
   function handleInputChange(
@@ -90,7 +104,13 @@ export default observer(function ActivityForm() {
           type="submit"
           content="Submit"
         />
-        <Button floated="right" type="button" content="Cancel" />
+        <Button
+          as={Link}
+          to="/activities"
+          floated="right"
+          type="button"
+          content="Cancel"
+        />
       </Form>
     </Segment>
   );

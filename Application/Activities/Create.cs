@@ -49,7 +49,7 @@ namespace Application.Activities
                     IsHost = true
                 };
 
-                request.Activity.Anttendees.Add(attendee);
+                request.Activity.Attendees.Add(attendee);
 
                 _context.Activities.Add(request.Activity);
                 var result = await _context.SaveChangesAsync() > 0;

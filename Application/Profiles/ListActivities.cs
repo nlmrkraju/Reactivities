@@ -32,26 +32,42 @@ namespace Application.Profiles
 
             public async Task<Result<List<UserActivityDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var query = _context.Activities
-                    .Where(x => x.Attendees.Any(a => a.AppUser.UserName == request.Username))
+                // var query = _context.Activities
+                //     .Where(x => x.Attendees.Any(a => a.AppUser.UserName == request.Username))
+                //     .OrderBy(a => a.)
+                //     .ProjectTo<UserActivityDto>(_mapper.ConfigurationProvider)
+                //     .AsQueryable();
+
+                // if (request.Predicate == "past")
+                // {
+                //     query = query.Where(x => x.Date < DateTime.Now);
+                // }
+                // else if (request.Predicate == "hosting")
+                // {
+                //     query = query.Where(x => x.HostUsername == request.Username);
+                // }
+                // else
+                // {
+                //     query = query.Where(x => x.Date >= DateTime.Now);
+                // }
+
+                // var activities = await query.ToListAsync();
+
+                // return Result<List<UserActivityDto>>.Success(activities);
+
+                var query = _context.ActivityAttendees
+                    .Where(u => u.AppUser.UserName == request.Username)
+                    .OrderBy(a => a.Activity.Date)
                     .ProjectTo<UserActivityDto>(_mapper.ConfigurationProvider)
                     .AsQueryable();
-
-                if (request.Predicate == "past")
+                query = request.Predicate switch
                 {
-                    query = query.Where(x => x.Date < DateTime.Now);
-                }
-                else if (request.Predicate == "hosting")
-                {
-                    query = query.Where(x => x.HostUsername == request.Username);
-                }
-                else
-                {
-                    query = query.Where(x => x.Date >= DateTime.Now);
-                }
-
+                    "past" => query.Where(a => a.Date <= DateTime.Now),
+                    "hosting" => query.Where(a => a.HostUsername ==
+                    request.Username),
+                    _ => query.Where(a => a.Date >= DateTime.Now)
+                };
                 var activities = await query.ToListAsync();
-
                 return Result<List<UserActivityDto>>.Success(activities);
             }
         }

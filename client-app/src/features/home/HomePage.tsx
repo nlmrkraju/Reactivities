@@ -1,6 +1,14 @@
+import FacebookLogin from "@greatsumini/react-facebook-login";
 import React from "react";
 import { Link } from "react-router-dom";
-import { Container, Header, Segment, Image, Button } from "semantic-ui-react";
+import {
+  Container,
+  Header,
+  Segment,
+  Image,
+  Button,
+  Divider,
+} from "semantic-ui-react";
 import { useStore } from "../../app/stores/store";
 import LoginForm from "../users/LoginForm";
 import RegisterForm from "../users/RegisterForm";
@@ -45,6 +53,23 @@ export default function HomePage() {
               {" "}
               Register!
             </Button>
+            <Divider horizontal inverted>
+              Or
+            </Divider>
+            <Button
+              as={FacebookLogin}
+              appId="1486013808477203"
+              size="huge"
+              inverted
+              color="facebook"
+              content="Login in Facebook"
+              onSuccess={(response: any) => {
+                console.log("Login success", response);
+              }}
+              onFail={(response: any) => {
+                console.log("Login failed", response);
+              }}
+            />
           </>
         )}
       </Container>

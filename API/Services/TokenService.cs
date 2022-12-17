@@ -36,7 +36,7 @@ namespace API.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(1),
+                Expires = DateTime.UtcNow.AddMinutes(10),
                 SigningCredentials = creds
             };
 
@@ -52,7 +52,7 @@ namespace API.Services
             var randomNumber = new byte[32];
             using var rng = RandomNumberGenerator.Create();
             rng.GetBytes(randomNumber);
-            return new RefreshToken{Token = Convert.ToBase64String(randomNumber)};
+            return new RefreshToken { Token = Convert.ToBase64String(randomNumber) };
         }
     }
 }
